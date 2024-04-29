@@ -89,14 +89,14 @@ df = pd.DataFrame({
 # Melt dataframe for visualization
 df_melted = df.melt("Year", var_name="Category", value_name="Balance")
 
-# Plot stacked bar chart
+# Plot grouped bar chart
 bar_chart = alt.Chart(df_melted).mark_bar().encode(
     x=alt.X("Year:O", axis=alt.Axis(title="Year")),
-    y=alt.Y("Balance:Q", stack="normalize", axis=alt.Axis(title="Balance")),
+    y=alt.Y("Balance:Q", axis=alt.Axis(title="Balance ($)", format="$,.0f")),
     color=alt.Color("Category:N", legend=alt.Legend(title="Category"), scale=alt.Scale(scheme="dark2")),
-    tooltip=["Year", "Balance", "Category"]
+    column=alt.Column("Category:N", title=None)
 ).properties(
-    width=700,
+    width=150,
     height=400,
     title="Enhanced Cashflow Model"
 )
