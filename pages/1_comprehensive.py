@@ -34,6 +34,8 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
         # Calculate liabilities
         annual_liability_payment = annual_expenses["Liabilities"]
         liabilities[i] = liabilities[i-1] * (1 + liability_roi / 100) / (1 + inflation_rate / 100) - annual_liability_payment
+        if liabilities[i] <= 0:
+            liabilities[i] = 0
         
         # Calculate net worth
         net_worth[i] = total_assets[i] - liabilities[i]
