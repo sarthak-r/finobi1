@@ -316,7 +316,6 @@ def main():
     st.altair_chart(chart_net_worth)
 
 # Run the app
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
 
-main()
