@@ -36,15 +36,17 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
         
         # Calculate monthly income and expenses
         monthly_income = super_contribution / 12
-        monthly_expense = monthly_expenses + monthly_liabilities
+        monthly_expense = monthly_expenses * ((1 + inflation_rate / 100) ** (years[i] - current_age))
         
         # Calculate liabilities
-        liabilities[i] = liabilities[i-1] * (1 + liability_roi / 100) / (1 + inflation_rate / 100) - monthly_liabilities
-        if liabilities[i] <= 0:
-            liabilities[i] = 0
+        liabilities[i] = liabilities[i-1] * (1 + liability_roi / 100) * (1 + inflation_rate / 100)
         
         # Calculate net worth
         net_worth[i] = total_assets[i] - liabilities[i] + monthly_income - monthly_expense
+        
+        # Prevent negative liabilities
+        if liabilities[i] < 0:
+            liabilities[i] = 0
         
     return years, super_balance, total_assets, liabilities, net_worth
 
