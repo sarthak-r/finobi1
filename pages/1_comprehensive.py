@@ -7,6 +7,7 @@ import streamlit as st
 def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_asset_balances, 
                         annual_super_contribution, annual_asset_contributions, annual_expenses, 
                         asset_rois, liability_roi, inflation_rate, life_expectancy):
+    """Calculate cashflows for each year based on user inputs."""
     years = np.arange(current_age, life_expectancy + 1)
     super_balance = np.zeros(len(years))
     total_assets = np.zeros(len(years))
@@ -30,7 +31,9 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
         total_assets[i] = total_assets[i-1] * (1 + sum(asset_rois.values()) / 100) + total_asset_contribution
         
         # Calculate liabilities
-        liabilities[i] = liabilities[i-1] * (1 + liability_roi / 100) / (1 + inflation_rate / 100) + annual_expenses["Liabilities"]
+        # For liabilities like loans, assume fixed EMIs paid each year
+        annual_liability_payment = annual_expenses["Liabilities"]
+        liabilities[i] = liabilities[i-1] * (1 + liability_roi / 100) / (1 + inflation_rate / 100) - annual_liability_payment
         
         # Calculate net worth
         net_worth[i] = total_assets[i] - liabilities[i]
@@ -38,114 +41,120 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
     return years, super_balance, total_assets, liabilities, net_worth
 
 # Streamlit app
-st.title("Comprehensive Cashflow Modeling")
+def main():
+    """Main function to run the Streamlit app."""
+    st.title("Comprehensive Cashflow Modeling")
 
-# Financial inputs
-current_age = st.slider("Current age", 20, 80, 30)
-retirement_age = st.slider("Retirement age", current_age + 1, 80, 60)
-initial_super_bal = st.slider("Initial superannuation balance", 1, 1000000, 250000)
-initial_asset_balances = {
-    "Home": st.slider("Initial home balance", 0, 1000000, 100000),
-    "Property": st.slider("Initial property balance", 0, 1000000, 150000),
-    "Stocks": st.slider("Initial stocks balance", 0, 1000000, 200000),
-    "Bonds": st.slider("Initial bonds balance", 0, 1000000, 100000)
-}
-annual_super_contribution = st.slider("Annual contribution to superannuation", 0, 50000, 10000)
-annual_asset_contributions = {
-    "Home": st.slider("Annual contribution to home", 0, 50000, 5000),
-    "Property": st.slider("Annual contribution to property", 0, 50000, 5000),
-    "Stocks": st.slider("Annual contribution to stocks", 0, 50000, 5000),
-    "Bonds": st.slider("Annual contribution to bonds", 0, 50000, 5000)
-}
-annual_expenses = {
-    "Living Expenses": st.slider("Annual living expenses", 0, 50000, 20000),
-    "Healthcare": st.slider("Annual healthcare expenses", 0, 50000, 10000),
-    "Leisure": st.slider("Annual leisure expenses", 0, 50000, 5000),
-    "Liabilities": st.slider("Annual liabilities", 0, 50000, 5000)
-}
-asset_rois = {
-    "Superannuation": st.slider("Superannuation return percentage", 0, 25, 4),
-    "Home": st.slider("Home return percentage", 0, 25, 3),
-    "Property": st.slider("Property return percentage", 0, 25, 5),
-    "Stocks": st.slider("Stocks return percentage", 0, 25, 7),
-    "Bonds": st.slider("Bonds return percentage", 0, 25, 2)
-}
-liability_roi = st.slider("Liability return percentage", 0, 25, 2)
-inflation_rate = st.slider("Inflation rate", 0, 10, 2)
-life_expectancy = st.slider("Life expectancy", 80, 100, 85)
+    # Financial inputs
+    current_age = st.slider("Current age", 20, 80, 30)
+    retirement_age = st.slider("Retirement age", current_age + 1, 80, 60)
+    initial_super_bal = st.slider("Initial superannuation balance", 1, 1000000, 250000)
+    initial_asset_balances = {
+        "Home": st.slider("Initial home balance", 0, 1000000, 100000),
+        "Property": st.slider("Initial property balance", 0, 1000000, 150000),
+        "Stocks": st.slider("Initial stocks balance", 0, 1000000, 200000),
+        "Bonds": st.slider("Initial bonds balance", 0, 1000000, 100000)
+    }
+    annual_super_contribution = st.slider("Annual contribution to superannuation", 0, 50000, 10000)
+    annual_asset_contributions = {
+        "Home": st.slider("Annual contribution to home", 0, 50000, 5000),
+        "Property": st.slider("Annual contribution to property", 0, 50000, 5000),
+        "Stocks": st.slider("Annual contribution to stocks", 0, 50000, 5000),
+        "Bonds": st.slider("Annual contribution to bonds", 0, 50000, 5000)
+    }
+    annual_expenses = {
+        "Living Expenses": st.slider("Annual living expenses", 0, 50000, 20000),
+        "Healthcare": st.slider("Annual healthcare expenses", 0, 50000, 10000),
+        "Leisure": st.slider("Annual leisure expenses", 0, 50000, 5000),
+        "Liabilities": st.slider("Annual liabilities payment", 0, 50000, 5000)
+    }
+    asset_rois = {
+        "Superannuation": st.slider("Superannuation return percentage", 0, 25, 4),
+        "Home": st.slider("Home return percentage", 0, 25, 3),
+        "Property": st.slider("Property return percentage", 0, 25, 5),
+        "Stocks": st.slider("Stocks return percentage", 0, 25, 7),
+        "Bonds": st.slider("Bonds return percentage", 0, 25, 2)
+    }
+    liability_roi = st.slider("Liability return percentage", 0, 25, 2)
+    inflation_rate = st.slider("Inflation rate", 0, 10, 2)
+    life_expectancy = st.slider("Life expectancy", 80, 100, 85)
 
-# Calculate cashflows
-years, super_balance, total_assets, liabilities, net_worth = calculate_cashflows(current_age, retirement_age, 
-                                                                                 initial_super_bal, initial_asset_balances, 
-                                                                                 annual_super_contribution, 
-                                                                                 annual_asset_contributions, 
-                                                                                 annual_expenses, asset_rois, 
-                                                                                 liability_roi, inflation_rate, 
-                                                                                 life_expectancy)
+    # Calculate cashflows
+    years, super_balance, total_assets, liabilities, net_worth = calculate_cashflows(current_age, retirement_age, 
+                                                                                     initial_super_bal, initial_asset_balances, 
+                                                                                     annual_super_contribution, 
+                                                                                     annual_asset_contributions, 
+                                                                                     annual_expenses, asset_rois, 
+                                                                                     liability_roi, inflation_rate, 
+                                                                                     life_expectancy)
 
-# Create dataframe for visualization
-df_super = pd.DataFrame({
-    "Year": years,
-    "Superannuation Balance": super_balance
-})
+    # Create dataframe for visualization
+    df_super = pd.DataFrame({
+        "Year": years,
+        "Superannuation Balance": super_balance
+    })
 
-df_assets = pd.DataFrame({
-    "Year": years,
-    "Total Assets": total_assets
-})
+    df_assets = pd.DataFrame({
+        "Year": years,
+        "Total Assets": total_assets
+    })
 
-df_liabilities = pd.DataFrame({
-    "Year": years,
-    "Liabilities": liabilities
-})
+    df_liabilities = pd.DataFrame({
+        "Year": years,
+        "Liabilities": liabilities
+    })
 
-df_net_worth = pd.DataFrame({
-    "Year": years,
-    "Net Worth": net_worth
-})
+    df_net_worth = pd.DataFrame({
+        "Year": years,
+        "Net Worth": net_worth
+    })
 
-# Plot charts
-chart_super = alt.Chart(df_super).mark_line().encode(
-    x='Year',
-    y=alt.Y('Superannuation Balance', axis=alt.Axis(title="Superannuation Balance ($)", format="$,.0f")),
-    color=alt.value("blue")
-).properties(
-    width=700,
-    height=200,
-    title="Superannuation Balance"
-)
+    # Plot charts
+    chart_super = alt.Chart(df_super).mark_line().encode(
+        x='Year',
+        y=alt.Y('Superannuation Balance', axis=alt.Axis(title="Superannuation Balance ($)", format="$,.0f")),
+        color=alt.value("blue")
+    ).properties(
+        width=700,
+        height=200,
+        title="Superannuation Balance"
+    )
 
-chart_assets = alt.Chart(df_assets).mark_line().encode(
-    x='Year',
-    y=alt.Y('Total Assets', axis=alt.Axis(title="Total Assets ($)", format="$,.0f")),
-    color=alt.value("green")
-).properties(
-    width=700,
-    height=200,
-    title="Total Assets"
-)
+    chart_assets = alt.Chart(df_assets).mark_line().encode(
+        x='Year',
+        y=alt.Y('Total Assets', axis=alt.Axis(title="Total Assets ($)", format="$,.0f")),
+        color=alt.value("green")
+    ).properties(
+        width=700,
+        height=200,
+        title="Total Assets"
+    )
 
-chart_liabilities = alt.Chart(df_liabilities).mark_line().encode(
-    x='Year',
-    y=alt.Y('Liabilities', axis=alt.Axis(title="Liabilities ($)", format="$,.0f")),
-    color=alt.value("red")
-).properties(
-    width=700,
-    height=200,
-    title="Liabilities"
-)
+    chart_liabilities = alt.Chart(df_liabilities).mark_line().encode(
+        x='Year',
+        y=alt.Y('Liabilities', axis=alt.Axis(title="Liabilities ($)", format="$,.0f")),
+        color=alt.value("red")
+    ).properties(
+        width=700,
+        height=200,
+        title="Liabilities"
+    )
 
-chart_net_worth = alt.Chart(df_net_worth).mark_line().encode(
-    x='Year',
-    y=alt.Y('Net Worth', axis=alt.Axis(title="Net Worth ($)", format="$,.0f")),
-    color=alt.value("purple")
-).properties(
-    width=700,
-    height=200,
-    title="Net Worth"
-)
+    chart_net_worth = alt.Chart(df_net_worth).mark_line().encode(
+        x='Year',
+        y=alt.Y('Net Worth', axis=alt.Axis(title="Net Worth ($)", format="$,.0f")),
+        color=alt.value("purple")
+    ).properties(
+        width=700,
+        height=200,
+        title="Net Worth"
+    )
 
-st.altair_chart(chart_super)
-st.altair_chart(chart_assets)
-st.altair_chart(chart_liabilities)
-st.altair_chart(chart_net_worth)
+    st.altair_chart(chart_super)
+    st.altair_chart(chart_assets)
+    st.altair_chart(chart_liabilities)
+    st.altair_chart(chart_net_worth)
+
+# Run the app
+if __name__ == "__main__":
+    main()
