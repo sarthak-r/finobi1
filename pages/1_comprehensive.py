@@ -48,36 +48,49 @@ def main():
     # Financial inputs
     current_age = st.slider("Current age", 20, 80, 30)
     retirement_age = st.slider("Retirement age", current_age + 1, 80, 60)
-    initial_super_bal = st.slider("Initial superannuation balance", 1, 1000000, 250000)
+    initial_super_bal = st.number_input("Initial superannuation balance", min_value=1, max_value=1000000, value=250000)
+    
+    st.subheader("Initial Asset Balances")
     initial_asset_balances = {
-        "Home": st.slider("Initial home balance", 0, 1000000, 100000),
-        "Property": st.slider("Initial property balance", 0, 1000000, 150000),
-        "Stocks": st.slider("Initial stocks balance", 0, 1000000, 200000),
-        "Bonds": st.slider("Initial bonds balance", 0, 1000000, 100000)
+        "Home": st.number_input("Initial home balance", min_value=0, max_value=1000000, value=100000),
+        "Property": st.number_input("Initial property balance", min_value=0, max_value=1000000, value=150000),
+        "Stocks": st.number_input("Initial stocks balance", min_value=0, max_value=1000000, value=200000),
+        "Bonds": st.number_input("Initial bonds balance", min_value=0, max_value=1000000, value=100000)
     }
-    annual_super_contribution = st.slider("Annual contribution to superannuation", 0, 50000, 10000)
+    
+    st.subheader("Annual Contributions to Assets")
     annual_asset_contributions = {
-        "Home": st.slider("Annual contribution to home", 0, 50000, 5000),
-        "Property": st.slider("Annual contribution to property", 0, 50000, 5000),
-        "Stocks": st.slider("Annual contribution to stocks", 0, 50000, 5000),
-        "Bonds": st.slider("Annual contribution to bonds", 0, 50000, 5000)
+        "Home": st.number_input("Annual contribution to home", min_value=0, max_value=50000, value=5000),
+        "Property": st.number_input("Annual contribution to property", min_value=0, max_value=50000, value=5000),
+        "Stocks": st.number_input("Annual contribution to stocks", min_value=0, max_value=50000, value=5000),
+        "Bonds": st.number_input("Annual contribution to bonds", min_value=0, max_value=50000, value=5000)
     }
+    
+    st.subheader("Expenses")
     initial_expenses = {
-        "Liabilities": st.slider("Initial liabilities balance", 0, 1000000, 50000)
+        "Liabilities": st.number_input("Initial liabilities balance", min_value=0, max_value=1000000, value=50000)
     }
     annual_expenses = {
-        "Liabilities": st.slider("Annual liabilities payment", 0, 50000, 5000)
+        "Liabilities": st.number_input("Annual liabilities payment", min_value=0, max_value=50000, value=5000)
     }
+    
+    st.subheader("Asset Returns (%)")
     asset_rois = {
-        "Superannuation": st.slider("Superannuation return percentage", 0, 25, 4),
-        "Home": st.slider("Home return percentage", 0, 25, 3),
-        "Property": st.slider("Property return percentage", 0, 25, 5),
-        "Stocks": st.slider("Stocks return percentage", 0, 25, 7),
-        "Bonds": st.slider("Bonds return percentage", 0, 25, 2)
+        "Superannuation": st.number_input("Superannuation return percentage", min_value=0, max_value=25, value=4),
+        "Home": st.number_input("Home return percentage", min_value=0, max_value=25, value=3),
+        "Property": st.number_input("Property return percentage", min_value=0, max_value=25, value=5),
+        "Stocks": st.number_input("Stocks return percentage", min_value=0, max_value=25, value=7),
+        "Bonds": st.number_input("Bonds return percentage", min_value=0, max_value=25, value=2)
     }
-    liability_roi = st.slider("Liability return percentage", 0, 25, 2)
-    inflation_rate = st.slider("Inflation rate", 0, 10, 2)
-    life_expectancy = st.slider("Life expectancy", 80, 100, 85)
+    
+    st.subheader("Liability Returns (%)")
+    liability_roi = st.number_input("Liability return percentage", min_value=0, max_value=25, value=2)
+    
+    st.subheader("Inflation Rate (%)")
+    inflation_rate = st.number_input("Inflation rate", min_value=0, max_value=10, value=2)
+    
+    st.subheader("Life Expectancy")
+    life_expectancy = st.number_input("Life expectancy", min_value=80, max_value=100, value=85)
 
     # Calculate cashflows
     years, super_balance, total_assets, liabilities, net_worth = calculate_cashflows(current_age, retirement_age, 
@@ -159,4 +172,3 @@ def main():
 # Run the app
 if __name__ == "__main__":
     main()
-8
