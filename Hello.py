@@ -1,51 +1,46 @@
-# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+import altair as alt
+import numpy as np
+import pandas as pd
 import streamlit as st
-from streamlit.logger import get_logger
 
-LOGGER = get_logger(__name__)
+# Function to calculate balance at each year
+def calculate_balance(current_age, super_bal, annual_contribution, retirement_age, roi, inflation_rate, income_replacement_ratio, life_expectancy):
+    years = np.arange(current_age, life_expectancy + 1)
+    balance = np.zeros(len(years))
+    balance[0] = super_bal
+    annual_expenses = super_bal * (income_replacement_ratio / 100)
+    for i in range(1, len(years)):
+        balance[i] = (balance[i - 1] * (1 + roi / 100) + annual_contribution) / (1 + inflation_rate / 100)
+        if i >= retirement_age - current_age:
+            balance[i] -= annual_expenses
+    return years, balance
 
+# Streamlit app
+st.title("Retirement Cashflow Model")
 
-def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
-    )
+current_age = st.slider("Current age", 20, 80, 30)
+super_bal = st.slider("Current super balance", 100, 1000000, 250000)
+annual_contribution = st.slider("Annual contribution to super", 0, 50000, 10000)
+retirement_age = st.slider("Retirement age", current_age + 1, 80, 60)
+roi = st.slider("Return percentage", 0, 25, 7)
+inflation_rate = st.slider("Inflation rate", 0, 10, 2)
+income_replacement_ratio = st.slider("Income replacement ratio (%)", 50, 150, 70)
+life_expectancy = st.slider("Life expectancy", 80, 100, 85)
 
-    st.write("# Welcome to Streamlit! 👋")
+years, balance = calculate_balance(current_age, super_bal, annual_contribution, retirement_age, roi, inflation_rate, income_replacement_ratio, life_expectancy)
+df = pd.DataFrame({"Year": years, "Balance": balance})
 
-    st.sidebar.success("Select a demo above.")
+st.write("### Cashflow Model")
 
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-    """
-    )
+# Bar chart with interactive tooltip
+tooltip = [alt.Tooltip("Year:O", title="Year"), alt.Tooltip("Balance:Q", title="Balance", format=".2f")]
+chart = alt.Chart(df).mark_bar().encode(
+    x="Year:O",
+    y="Balance:Q",
+    tooltip=tooltip
+).properties(
+    width=700,
+    height=400
+)
 
-
-if __name__ == "__main__":
-    run()
+st.altair_chart(chart, use_container_width=True)
