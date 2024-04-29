@@ -122,40 +122,40 @@ def main():
     })
 
     # Plot charts
-    chart_super = alt.Chart(df_super).mark_line().encode(
+    chart_super = alt.Chart(df_super).mark_bar().encode(
         x='Year',
         y=alt.Y('Superannuation Balance', axis=alt.Axis(title="Superannuation Balance ($)", format="$,.0f")),
-        color=alt.value("blue")
+        tooltip=['Year', alt.Tooltip('Superannuation Balance', format='$,.0f')]
     ).properties(
         width=700,
         height=200,
         title="Superannuation Balance"
     )
 
-    chart_assets = alt.Chart(df_assets).mark_line().encode(
+    chart_assets = alt.Chart(df_assets).mark_bar().encode(
         x='Year',
         y=alt.Y('Total Assets', axis=alt.Axis(title="Total Assets ($)", format="$,.0f")),
-        color=alt.value("green")
+        tooltip=['Year', alt.Tooltip('Total Assets', format='$,.0f')]
     ).properties(
         width=700,
         height=200,
         title="Total Assets"
     )
 
-    chart_liabilities = alt.Chart(df_liabilities).mark_line().encode(
+    chart_liabilities = alt.Chart(df_liabilities).mark_bar().encode(
         x='Year',
         y=alt.Y('Liabilities', axis=alt.Axis(title="Liabilities ($)", format="$,.0f")),
-        color=alt.value("red")
+        tooltip=['Year', alt.Tooltip('Liabilities', format='$,.0f')]
     ).properties(
         width=700,
         height=200,
         title="Liabilities"
     )
 
-    chart_net_worth = alt.Chart(df_net_worth).mark_line().encode(
+    chart_net_worth = alt.Chart(df_net_worth).mark_bar().encode(
         x='Year',
         y=alt.Y('Net Worth', axis=alt.Axis(title="Net Worth ($)", format="$,.0f")),
-        color=alt.value("purple")
+        tooltip=['Year', alt.Tooltip('Net Worth', format='$,.0f')]
     ).properties(
         width=700,
         height=200,
