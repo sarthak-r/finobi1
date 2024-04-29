@@ -17,6 +17,7 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
     # Set initial balances
     super_balance[0] = initial_super_bal
     total_assets[0] = initial_super_bal + sum(initial_asset_balances.values())
+    liabilities[0] = sum(initial_expenses.values())  # Initial liabilities
     
     for i in range(1, len(years)):
         # Calculate super contributions and returns
@@ -31,7 +32,6 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
         total_assets[i] = total_assets[i-1] * (1 + sum(asset_rois.values()) / 100) + total_asset_contribution
         
         # Calculate liabilities
-        # For liabilities like loans, assume fixed EMIs paid each year
         annual_liability_payment = annual_expenses["Liabilities"]
         liabilities[i] = liabilities[i-1] * (1 + liability_roi / 100) / (1 + inflation_rate / 100) - annual_liability_payment
         
@@ -62,10 +62,10 @@ def main():
         "Stocks": st.slider("Annual contribution to stocks", 0, 50000, 5000),
         "Bonds": st.slider("Annual contribution to bonds", 0, 50000, 5000)
     }
+    initial_expenses = {
+        "Liabilities": st.slider("Initial liabilities balance", 0, 1000000, 50000)
+    }
     annual_expenses = {
-        "Living Expenses": st.slider("Annual living expenses", 0, 50000, 20000),
-        "Healthcare": st.slider("Annual healthcare expenses", 0, 50000, 10000),
-        "Leisure": st.slider("Annual leisure expenses", 0, 50000, 5000),
         "Liabilities": st.slider("Annual liabilities payment", 0, 50000, 5000)
     }
     asset_rois = {
@@ -84,6 +84,7 @@ def main():
                                                                                      initial_super_bal, initial_asset_balances, 
                                                                                      annual_super_contribution, 
                                                                                      annual_asset_contributions, 
+                                                                                     initial_expenses,
                                                                                      annual_expenses, asset_rois, 
                                                                                      liability_roi, inflation_rate, 
                                                                                      life_expectancy)
