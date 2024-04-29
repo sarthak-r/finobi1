@@ -6,7 +6,7 @@ import streamlit as st
 # Function to calculate cashflows for each year
 def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_asset_balances, 
                         annual_super_contribution, annual_asset_contributions, initial_expenses, 
-                        annual_expenses, asset_rois, liability_roi, inflation_rate, life_expectancy):
+                        annual_expenses, monthly_expenses, asset_rois, liability_roi, inflation_rate, life_expectancy):
     """Calculate cashflows for each year based on user inputs."""
     years = np.arange(current_age, life_expectancy + 1)
     super_balance = np.zeros(len(years))
@@ -18,6 +18,9 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
     super_balance[0] = initial_super_bal
     total_assets[0] = initial_super_bal + sum(initial_asset_balances.values())
     liabilities[0] = initial_expenses["Liabilities"]  # Initial liabilities
+    
+    # Calculate monthly liabilities
+    monthly_liabilities = initial_expenses["Liabilities"] / 12
     
     for i in range(1, len(years)):
         # Calculate super contributions and returns
@@ -31,14 +34,17 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
         total_asset_contribution = sum(annual_asset_contributions.values())
         total_assets[i] = total_assets[i-1] * (1 + sum(asset_rois.values()) / 100) + total_asset_contribution
         
+        # Calculate monthly income and expenses
+        monthly_income = super_contribution / 12
+        monthly_expense = monthly_expenses + monthly_liabilities
+        
         # Calculate liabilities
-        annual_liability_payment = annual_expenses["Liabilities"]
-        liabilities[i] = liabilities[i-1] * (1 + liability_roi / 100) / (1 + inflation_rate / 100) - annual_liability_payment
+        liabilities[i] = liabilities[i-1] * (1 + liability_roi / 100) / (1 + inflation_rate / 100) - monthly_liabilities
         if liabilities[i] <= 0:
             liabilities[i] = 0
         
         # Calculate net worth
-        net_worth[i] = total_assets[i] - liabilities[i]
+        net_worth[i] = total_assets[i] - liabilities[i] + monthly_income - monthly_expense
         
     return years, super_balance, total_assets, liabilities, net_worth
 
@@ -77,6 +83,7 @@ def main():
     annual_expenses = {
         "Liabilities": st.slider("Annual payment", 0, 50000, 5000)
     }
+    monthly_expenses = st.slider("Monthly expenses", 0, 10000, 500)
     
     st.subheader("Returns and Rates")
     asset_rois = {
@@ -98,9 +105,9 @@ def main():
                                                                                      annual_super_contribution, 
                                                                                      annual_asset_contributions, 
                                                                                      initial_expenses,
-                                                                                     annual_expenses, asset_rois, 
-                                                                                     liability_roi, inflation_rate, 
-                                                                                     life_expectancy)
+                                                                                     annual_expenses, monthly_expenses, 
+                                                                                     asset_rois, liability_roi, 
+                                                                                     inflation_rate, life_expectancy)
 
     # Create dataframe for visualization
     df_super = pd.DataFrame({
