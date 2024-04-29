@@ -31,22 +31,19 @@ df = pd.DataFrame({"Year": years, "Asset Balance": asset_balance, "Liability Bal
 
 st.write("### Asset Liability Cashflow Model")
 
-# Line chart for asset and liability balances with tooltips
-asset_line = alt.Chart(df).mark_line(color='blue').encode(
+# Stacked bar chart for asset and liability balances with tooltips
+tooltip=['Asset Balance', 'Liability Balance']
+chart = alt.Chart(df).mark_bar().encode(
     x='Year:O',
-    y='Asset Balance:Q',
-    tooltip=[alt.Tooltip("Year:O", title="Year"), alt.Tooltip("Asset Balance:Q", title="Asset Balance", format=".2f")]
+    y=alt.Y('value:Q', stack=None),
+    color='variable:N',
+    tooltip=tooltip
+).transform_fold(
+    ['Asset Balance', 'Liability Balance'],
+    as_=['variable', 'value']
 ).properties(
     width=700,
     height=400
 )
-
-liability_line = alt.Chart(df).mark_line(color='red').encode(
-    x='Year:O',
-    y='Liability Balance:Q',
-    tooltip=[alt.Tooltip("Year:O", title="Year"), alt.Tooltip("Liability Balance:Q", title="Liability Balance", format=".2f")]
-)
-
-chart = asset_line + liability_line
 
 st.altair_chart(chart, use_container_width=True)
