@@ -81,27 +81,68 @@ years, super_balance, total_assets, liabilities, net_worth = calculate_cashflows
                                                                                  life_expectancy)
 
 # Create dataframe for visualization
-df = pd.DataFrame({
+df_super = pd.DataFrame({
     "Year": years,
-    "Superannuation Balance": super_balance,
-    "Total Assets": total_assets,
-    "Liabilities": liabilities,
+    "Superannuation Balance": super_balance
+})
+
+df_assets = pd.DataFrame({
+    "Year": years,
+    "Total Assets": total_assets
+})
+
+df_liabilities = pd.DataFrame({
+    "Year": years,
+    "Liabilities": liabilities
+})
+
+df_net_worth = pd.DataFrame({
+    "Year": years,
     "Net Worth": net_worth
 })
 
-# Melt dataframe for visualization
-df_melted = df.melt("Year", var_name="Category", value_name="Balance")
-
-# Plot grouped bar chart
-bar_chart = alt.Chart(df_melted).mark_bar().encode(
-    x=alt.X("Year:O", axis=alt.Axis(title="Year")),
-    y=alt.Y("Balance:Q", axis=alt.Axis(title="Balance ($)", format="$,.0f")),
-    color=alt.Color("Category:N", legend=alt.Legend(title="Category"), scale=alt.Scale(scheme="dark2")),
-    column=alt.Column("Category:N", title=None)
+# Plot charts
+chart_super = alt.Chart(df_super).mark_line().encode(
+    x='Year',
+    y=alt.Y('Superannuation Balance', axis=alt.Axis(title="Superannuation Balance ($)", format="$,.0f")),
+    color=alt.value("blue")
 ).properties(
-    width=150,
-    height=400,
-    title="Comprehensive Cashflow Model"
+    width=700,
+    height=200,
+    title="Superannuation Balance"
 )
 
-st.altair_chart(bar_chart)
+chart_assets = alt.Chart(df_assets).mark_line().encode(
+    x='Year',
+    y=alt.Y('Total Assets', axis=alt.Axis(title="Total Assets ($)", format="$,.0f")),
+    color=alt.value("green")
+).properties(
+    width=700,
+    height=200,
+    title="Total Assets"
+)
+
+chart_liabilities = alt.Chart(df_liabilities).mark_line().encode(
+    x='Year',
+    y=alt.Y('Liabilities', axis=alt.Axis(title="Liabilities ($)", format="$,.0f")),
+    color=alt.value("red")
+).properties(
+    width=700,
+    height=200,
+    title="Liabilities"
+)
+
+chart_net_worth = alt.Chart(df_net_worth).mark_line().encode(
+    x='Year',
+    y=alt.Y('Net Worth', axis=alt.Axis(title="Net Worth ($)", format="$,.0f")),
+    color=alt.value("purple")
+).properties(
+    width=700,
+    height=200,
+    title="Net Worth"
+)
+
+st.altair_chart(chart_super)
+st.altair_chart(chart_assets)
+st.altair_chart(chart_liabilities)
+st.altair_chart(chart_net_worth)
