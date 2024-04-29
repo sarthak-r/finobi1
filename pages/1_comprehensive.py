@@ -19,7 +19,10 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
     
     for i in range(1, len(years)):
         # Calculate super contributions and returns
-        super_contribution = annual_super_contribution
+        if years[i] <= retirement_age:
+            super_contribution = annual_super_contribution
+        else:
+            super_contribution = 0
         super_balance[i] = super_balance[i-1] * (1 + asset_rois["Superannuation"] / 100) + super_contribution
         
         # Calculate total asset contributions and returns
