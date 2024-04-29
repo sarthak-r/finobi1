@@ -31,7 +31,7 @@ df = pd.DataFrame({"Year": years, "Asset Balance": asset_balance, "Liability Bal
 
 st.write("### Asset Liability Cashflow Model")
 
-# Line chart for asset and liability balances
+# Line chart for asset and liability balances with tooltips
 asset_line = alt.Chart(df).mark_line(color='blue').encode(
     x='Year:O',
     y='Asset Balance:Q',
