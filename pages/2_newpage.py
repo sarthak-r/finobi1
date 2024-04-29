@@ -68,7 +68,7 @@ def main():
     inflation_rate = st.slider("Inflation rate", 0, 10, 2)
     
     st.subheader("Life Expectancy")
-    life_expectancy = st.slider("Life expectancy", 80, 130, 100)
+    life_expectancy = st.slider("Life expectancy", 70, 100, 85)
     
     years, super_balance, total_assets, total_liabilities, net_cash = calculate_cashflows(current_age, retirement_age, 
                                                                                          initial_super_bal, 
