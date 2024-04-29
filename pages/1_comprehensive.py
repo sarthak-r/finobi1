@@ -9,31 +9,33 @@ def calculate_cashflows(current_age, retirement_age, initial_super_bal, initial_
                         asset_rois, liability_roi, inflation_rate, life_expectancy):
     years = np.arange(current_age, life_expectancy + 1)
     super_balance = np.zeros(len(years))
-    asset_balances = {asset: np.zeros(len(years)) for asset in initial_asset_balances.keys()}
-    liability_balance = np.zeros(len(years))
+    total_assets = np.zeros(len(years))
+    liabilities = np.zeros(len(years))
+    net_worth = np.zeros(len(years))
     
     # Set initial balances
     super_balance[0] = initial_super_bal
-    for asset, balance in initial_asset_balances.items():
-        asset_balances[asset][0] = balance
+    total_assets[0] = initial_super_bal + sum(initial_asset_balances.values())
     
     for i in range(1, len(years)):
         # Calculate super contributions and returns
         super_contribution = annual_super_contribution
         super_balance[i] = super_balance[i-1] * (1 + asset_rois["Superannuation"] / 100) + super_contribution
         
-        # Calculate asset contributions and returns
-        for asset, balance in asset_balances.items():
-            asset_contribution = annual_asset_contributions[asset]
-            asset_balances[asset][i] = balance[i-1] * (1 + asset_rois[asset] / 100) + asset_contribution
+        # Calculate total asset contributions and returns
+        total_asset_contribution = sum(annual_asset_contributions.values())
+        total_assets[i] = total_assets[i-1] * (1 + sum(asset_rois.values()) / 100) + total_asset_contribution
         
         # Calculate liabilities
-        liability_balance[i] = liability_balance[i-1] * (1 + liability_roi / 100) / (1 + inflation_rate / 100) + annual_expenses["Liabilities"]
+        liabilities[i] = liabilities[i-1] * (1 + liability_roi / 100) / (1 + inflation_rate / 100) + annual_expenses["Liabilities"]
         
-    return years, super_balance, asset_balances, liability_balance
+        # Calculate net worth
+        net_worth[i] = total_assets[i] - liabilities[i]
+        
+    return years, super_balance, total_assets, liabilities, net_worth
 
 # Streamlit app
-st.title("Enhanced Cashflow Modeling")
+st.title("Comprehensive Cashflow Modeling")
 
 # Financial inputs
 current_age = st.slider("Current age", 20, 80, 30)
@@ -70,20 +72,21 @@ inflation_rate = st.slider("Inflation rate", 0, 10, 2)
 life_expectancy = st.slider("Life expectancy", 80, 100, 85)
 
 # Calculate cashflows
-years, super_balance, asset_balances, liability_balance = calculate_cashflows(current_age, retirement_age, 
-                                                                             initial_super_bal, initial_asset_balances, 
-                                                                             annual_super_contribution, 
-                                                                             annual_asset_contributions, 
-                                                                             annual_expenses, asset_rois, 
-                                                                             liability_roi, inflation_rate, 
-                                                                             life_expectancy)
+years, super_balance, total_assets, liabilities, net_worth = calculate_cashflows(current_age, retirement_age, 
+                                                                                 initial_super_bal, initial_asset_balances, 
+                                                                                 annual_super_contribution, 
+                                                                                 annual_asset_contributions, 
+                                                                                 annual_expenses, asset_rois, 
+                                                                                 liability_roi, inflation_rate, 
+                                                                                 life_expectancy)
 
 # Create dataframe for visualization
 df = pd.DataFrame({
     "Year": years,
     "Superannuation Balance": super_balance,
-    **asset_balances,
-    "Liability Balance": liability_balance
+    "Total Assets": total_assets,
+    "Liabilities": liabilities,
+    "Net Worth": net_worth
 })
 
 # Melt dataframe for visualization
@@ -98,7 +101,7 @@ bar_chart = alt.Chart(df_melted).mark_bar().encode(
 ).properties(
     width=150,
     height=400,
-    title="Enhanced Cashflow Model"
+    title="Comprehensive Cashflow Model"
 )
 
 st.altair_chart(bar_chart)
