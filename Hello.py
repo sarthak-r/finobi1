@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+
 # Function to calculate balance at each year
 def calculate_balance(current_age, super_bal, annual_contribution, retirement_age, roi, inflation_rate, income_replacement_ratio, life_expectancy):
     years = np.arange(current_age, life_expectancy + 1)
