@@ -66,7 +66,6 @@ def main():
     #######################
 
 
-    import streamlit as st
 
     class Asset:
         def __init__(self, name, asset_type, value, growth=0, **kwargs):
