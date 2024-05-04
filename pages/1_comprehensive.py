@@ -126,10 +126,15 @@ def main():
 
     st.subheader("Assets")
     assets = []
-    while st.button("Add More Assets"):
-        with st.container():
-            asset = add_asset()
-            assets.append(asset)
+    add_more_assets = True
+
+    while add_more_assets:
+        asset = add_asset()
+        assets.append(asset)
+        add_more_assets = st.button("Add More Assets")
+
+    # After the loop, you can save and close the input section
+    st.write("Assets added:", assets)
 
     st.subheader("Liabilities")
     liabilities = []
