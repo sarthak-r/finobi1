@@ -4,7 +4,7 @@ import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
 
-with open(f"../config.yaml") as file:
+with open(f"../config.yaml","r") as file:
     config = yaml.load(file, Loader=SafeLoader)
 
 authenticator = stauth.Authenticate(
