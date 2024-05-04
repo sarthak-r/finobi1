@@ -2,6 +2,9 @@ from openai import OpenAI
 import streamlit as st
 import os
 
+authenticator.login()
+
+
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
     

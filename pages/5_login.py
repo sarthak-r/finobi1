@@ -17,4 +17,3 @@ authenticator = stauth.Authenticate(
 
 
 authenticator.login()
-st.caption("logged in")
