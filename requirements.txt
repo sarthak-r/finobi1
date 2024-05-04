@@ -5,3 +5,4 @@ pydeck
 streamlit
 openai
 streamlit-authenticator
+streamlit_pydantic
