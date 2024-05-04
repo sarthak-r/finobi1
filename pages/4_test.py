@@ -1,6 +1,16 @@
 from openai import OpenAI
 import streamlit as st
+import streamlit_authenticator as stauth
 import os
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
+
 
 authenticator.login()
 
