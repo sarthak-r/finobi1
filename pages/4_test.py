@@ -28,3 +28,4 @@ if prompt := st.chat_input():
 
 
 st.title(os.getcwd())
+print("hello")
