@@ -3,6 +3,9 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import os
 
+with open("./config.yaml","r") as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
