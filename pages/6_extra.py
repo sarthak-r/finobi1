@@ -55,109 +55,51 @@ def main():
     """Main function to run the Streamlit app."""
     st.title("Comprehensive Cashflow Modeling")
 
-
-
     # Financial inputs
     st.header("Financial Inputs")
     current_age = st.slider("Current age", 20, 80, 30)
     retirement_age = st.slider("Retirement age", current_age + 1, 80, 60)
     
-    #######################
-    #######################
-
-
-    import streamlit as st
-
-    class Asset:
-        def __init__(self, name, asset_type, value, growth=0, **kwargs):
-            self.name = name
-            self.asset_type = asset_type
-            self.value = value
-            self.growth = growth
-
-    def add_asset():
-        asset_name = st.text_input("Asset Name", "e.g. Secondary home")
-        asset_type = st.text_input("Asset Type", "e.g. real estate")
-        asset_value = st.slider("Asset Value", 1, 1000000, 800000)
-        asset_growth = st.slider("Asset Growth", 0, 50, 6)
-        return Asset(asset_name, asset_type, asset_value, asset_growth)
-
-    class Liability:
-        def __init__(self, name, liability_type, value, interest, **kwargs):
-            self.name = name
-            self.liability_type = liability_type
-            self.current_value = value
-            self.interest = interest
-
-    def add_liability():
-        liability_name = st.text_input("Liability Name", "e.g. Mortgage")
-        liability_type = st.text_input("Liability Type", "e.g. Home loan")
-        liability_value = st.slider("Liability Value", 1, 1000000, 500000)
-        liability_interest = st.slider("Liability Interest", 0, 20, 5)
-        return Liability(liability_name, liability_type, liability_value, liability_interest)
-
-    class Income:
-        def __init__(self, name, frequency, current_value, growth=0, **kwargs):
-            self.name = name
-            self.frequency = frequency
-            self.current_value = current_value
-            self.growth = growth
-
-    def add_income():
-        income_name = st.text_input("Income Name", "e.g. Salary")
-        income_frequency = st.text_input("Income Frequency", "e.g. Monthly")
-        income_value = st.slider("Income Value", 1, 100000, 50000)
-        income_growth = st.slider("Income Growth", 0, 20, 3)
-        return Income(income_name, income_frequency, income_value, income_growth)
-
-    class Expense:
-        def __init__(self, name, frequency, current_value, growth=0):
-            self.name = name
-            self.frequency = frequency
-            self.current_value = current_value
-            self.growth = growth
-
-    def add_expense():
-        expense_name = st.text_input("Expense Name", "e.g. Rent")
-        expense_frequency = st.text_input("Expense Frequency", "e.g. Monthly")
-        expense_value = st.slider("Expense Value", 1, 10000, 2000)
-        expense_growth = st.slider("Expense Growth", 0, 20, 2)
-        return Expense(expense_name, expense_frequency, expense_value, expense_growth)
-
+    st.subheader("Superannuation")
+    initial_super_bal = st.slider("Initial balance", 1, 1000000, 250000)
+    annual_super_contribution = st.slider("Annual contribution", 0, 50000, 10000)
+    
     st.subheader("Assets")
-    assets = []
-    while st.button("Add More Assets"):
-        asset = add_asset()
-        assets.append(asset)
-
+    initial_asset_balances = {
+        "Home": st.slider("Initial home balance", 0, 1000000, 100000),
+        "Property": st.slider("Initial property balance", 0, 1000000, 150000),
+        "Stocks": st.slider("Initial stocks balance", 0, 1000000, 200000),
+        "Bonds": st.slider("Initial bonds balance", 0, 1000000, 100000)
+    }
+    annual_asset_contributions = {
+        "Home": st.slider("Annual contribution to home", 0, 50000, 5000),
+        "Property": st.slider("Annual contribution to property", 0, 50000, 5000),
+        "Stocks": st.slider("Annual contribution to stocks", 0, 50000, 5000),
+        "Bonds": st.slider("Annual contribution to bonds", 0, 50000, 5000)
+    }
+    
     st.subheader("Liabilities")
-    liabilities = []
-    while st.button("Add More Liabilities"):
-        liability = add_liability()
-        liabilities.append(liability)
-
-    st.subheader("Income")
-    incomes = []
-    while st.button("Add More Income"):
-        income = add_income()
-        incomes.append(income)
-
-    st.subheader("Expenses")
-    expenses = []
-    while st.button("Add More Expenses"):
-        expense = add_expense()
-        expenses.append(expense)
-
-
-
-    #######################
-    #######################
-
-
-
-
-
-
+    initial_expenses = {
+        "Liabilities": st.slider("Initial balance", 0, 1000000, 50000)
+    }
+    annual_expenses = {
+        "Liabilities": st.slider("Annual payment", 0, 50000, 5000)
+    }
+    monthly_expenses = st.slider("Monthly expenses", 0, 10000, 500)
+    
+    st.subheader("Returns and Rates")
+    asset_rois = {
+        "Superannuation": st.slider("Superannuation return percentage", 0, 25, 4),
+        "Home": st.slider("Home return percentage", 0, 25, 3),
+        "Property": st.slider("Property return percentage", 0, 25, 5),
+        "Stocks": st.slider("Stocks return percentage", 0, 25, 7),
+        "Bonds": st.slider("Bonds return percentage", 0, 25, 2)
+    }
+    liability_roi = st.slider("Liability return percentage", 0, 25, 2)
+    inflation_rate = st.slider("Inflation rate", 0, 10, 2)
+    
+    st.subheader("Life Expectancy")
+    life_expectancy = st.slider("Life expectancy", 80, 100, 85)
 
     # Calculate cashflows
     years, super_balance, total_assets, liabilities, net_worth = calculate_cashflows(current_age, retirement_age, 

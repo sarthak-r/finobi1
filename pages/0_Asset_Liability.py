@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+
 # Function to calculate asset and liability balances at each year
 def calculate_asset_liability_balances(current_age, initial_assets, annual_contributions, annual_expenses, asset_roi, liability_roi, inflation_rate, life_expectancy):
     years = np.arange(current_age, life_expectancy + 1)
