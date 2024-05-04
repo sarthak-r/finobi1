@@ -123,11 +123,13 @@ def main():
         expense_growth = st.slider("Expense Growth", 0, 20, 2)
         return Expense(expense_name, expense_frequency, expense_value, expense_growth)
 
+
     st.subheader("Assets")
     assets = []
     while st.button("Add More Assets"):
-        asset = add_asset()
-        assets.append(asset)
+        with st.container():
+            asset = add_asset()
+            assets.append(asset)
 
     st.subheader("Liabilities")
     liabilities = []
