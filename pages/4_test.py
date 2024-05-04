@@ -1,5 +1,6 @@
 from openai import OpenAI
 import streamlit as st
+import os
 
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
@@ -26,4 +27,4 @@ if prompt := st.chat_input():
     st.chat_message("assistant").write(msg)
 
 
-print(os.getcwd)
+st.title(os.getcwd)
